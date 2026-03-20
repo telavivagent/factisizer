@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { toPng } from "html-to-image";
 
 export default function Home() {
   const [input, setInput] = useState("");
@@ -12,6 +13,9 @@ export default function Home() {
   const [confidence, setConfidence] = useState("");
   const [sources, setSources] = useState([]);
   const [showShareCard, setShowShareCard] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const shareCardRef = useRef(null);
 
   function handleClear() {
     setInput("");
@@ -23,6 +27,7 @@ export default function Home() {
     setConfidence("");
     setSources([]);
     setShowShareCard(false);
+    setIsDownloading(false);
   }
 
   async function handleAnalyze() {
@@ -66,6 +71,91 @@ export default function Home() {
     } finally {
       setIsAnalyzing(false);
     }
+  }
+
+  async function handleDownloadShareCard() {
+    if (!shareCardRef.current) return;
+
+    try {
+      setIsDownloading(true);
+
+      const dataUrl = await toPng(shareCardRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
+        backgroundColor: "#f9f7f4",
+      });
+
+      const link = document.createElement("a");
+      link.download = "factisizer-share-card.png";
+      link.href = dataUrl;
+      link.click();
+    } catch (error) {
+      alert("Failed to download share card image.");
+    } finally {
+      setIsDownloading(false);
+    }
+  }
+
+  function getShareText() {
+    return [
+      "FACTISIZER",
+      "",
+      `Claim: ${getClaimText()}`,
+      `Verdict: ${verdict || "--"}`,
+      `Explanation: ${getShortExplanation() || "No explanation available."}`,
+      `Confidence: ${confidence || "--"}`,
+      "",
+      "Factisizer",
+    ].join("\n");
+  }
+
+  function getCurrentUrl() {
+    if (typeof window === "undefined") return "";
+    return window.location.href;
+  }
+
+  function handleWhatsAppShare() {
+    const shareText = getShareText();
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+    window.open(whatsappUrl, "_blank");
+  }
+
+  function handleTelegramShare() {
+    const shareText = getShareText();
+    const currentUrl = getCurrentUrl();
+    const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(
+      currentUrl
+    )}&text=${encodeURIComponent(shareText)}`;
+    window.open(telegramUrl, "_blank");
+  }
+
+  function handleXShare() {
+    const shareText = getShareText();
+    const currentUrl = getCurrentUrl();
+    const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+      shareText
+    )}&url=${encodeURIComponent(currentUrl)}`;
+    window.open(xUrl, "_blank");
+  }
+
+  function handleFacebookShare() {
+    const currentUrl = getCurrentUrl();
+
+    if (
+      typeof window !== "undefined" &&
+      (window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1")
+    ) {
+      alert(
+        "Facebook share works properly after deployment because Facebook mainly shares a public URL. On localhost, this is not useful yet."
+      );
+      return;
+    }
+
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+      currentUrl
+    )}`;
+    window.open(facebookUrl, "_blank");
   }
 
   function getVerdictColor() {
@@ -260,8 +350,9 @@ export default function Home() {
           <div className="w-full max-w-[430px] rounded-t-[28px] bg-white px-5 pt-4 pb-6 shadow-2xl">
             <div className="mx-auto mb-4 h-1.5 w-14 rounded-full bg-gray-300" />
 
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-4 gap-3">
               <h3 className="text-[18px] font-bold text-black">Share Preview</h3>
+
               <button
                 onClick={() => setShowShareCard(false)}
                 className="rounded-full border border-gray-300 px-4 py-2 text-[14px] font-medium text-black"
@@ -270,7 +361,50 @@ export default function Home() {
               </button>
             </div>
 
-            <div className="rounded-[28px] border border-[#e6dfd6] bg-[#f9f7f4] px-5 py-6 shadow-[0_10px_30px_rgba(0,0,0,0.08)]">
+            <div className="mb-4 flex flex-wrap gap-2">
+              <button
+                onClick={handleWhatsAppShare}
+                className="rounded-full border border-green-200 bg-green-50 px-4 py-2 text-[14px] font-medium text-green-700"
+              >
+                WhatsApp
+              </button>
+
+              <button
+                onClick={handleTelegramShare}
+                className="rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-[14px] font-medium text-sky-700"
+              >
+                Telegram
+              </button>
+
+              <button
+                onClick={handleXShare}
+                className="rounded-full border border-gray-300 bg-gray-50 px-4 py-2 text-[14px] font-medium text-black"
+              >
+                X
+              </button>
+
+              <button
+                onClick={handleFacebookShare}
+                className="rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-[14px] font-medium text-blue-700"
+              >
+                Facebook
+              </button>
+
+              <button
+                onClick={handleDownloadShareCard}
+                disabled={isDownloading}
+                className={`rounded-full border border-gray-300 px-4 py-2 text-[14px] font-medium text-black ${
+                  isDownloading ? "opacity-60 cursor-not-allowed" : ""
+                }`}
+              >
+                {isDownloading ? "Downloading..." : "Download"}
+              </button>
+            </div>
+
+            <div
+              ref={shareCardRef}
+              className="rounded-[28px] border border-[#e6dfd6] bg-[#f9f7f4] px-5 py-6 shadow-[0_10px_30px_rgba(0,0,0,0.08)]"
+            >
               <div className="text-center">
                 <h2 className="text-[34px] leading-none font-bold tracking-tight">
                   <span className="text-black">Facti</span>
@@ -292,9 +426,9 @@ export default function Home() {
                 </p>
               </div>
 
-              <div className="mt-5 text-center">
+              <div className="mt-5 w-full flex justify-center">
                 <p
-                  className={`text-[44px] font-extrabold leading-none ${getShareVerdictColor()}`}
+                  className={`text-center text-[44px] font-extrabold leading-none tracking-tight ${getShareVerdictColor()}`}
                 >
                   {verdict}
                 </p>
