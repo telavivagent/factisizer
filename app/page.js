@@ -210,7 +210,7 @@ export default function Home() {
 
   return (
     <>
-      <main className="min-h-screen bg-[#f3f3f3] flex flex-col items-center">
+      <main className="min-h-screen bg-[#f3f3f3] flex flex-col items-center overflow-x-hidden">
         <header className="w-full bg-white border-b border-gray-200 flex flex-col items-center pt-2 pb-3">
           <h1 className="text-[34px] leading-none font-bold tracking-tight">
             <span className="text-black">Facti</span>
@@ -346,136 +346,142 @@ export default function Home() {
       </main>
 
       {showShareCard && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-end justify-center">
-          <div className="w-full max-w-[430px] rounded-t-[28px] bg-white px-5 pt-4 pb-6 shadow-2xl">
-            <div className="mx-auto mb-4 h-1.5 w-14 rounded-full bg-gray-300" />
+        <div className="fixed inset-0 z-50 bg-black/50 overflow-y-auto">
+          <div className="min-h-full flex items-start justify-center p-3 sm:p-6">
+            <div className="w-full max-w-[430px] my-4 rounded-[28px] bg-white px-5 pt-4 pb-6 shadow-2xl">
+              <div className="mx-auto mb-4 h-1.5 w-14 rounded-full bg-gray-300" />
 
-            <div className="flex items-center justify-between mb-4 gap-3">
-              <h3 className="text-[18px] font-bold text-black">Share Preview</h3>
+              <div className="sticky top-0 z-10 -mx-5 mb-4 bg-white/95 px-5 pt-1 pb-4 backdrop-blur-sm">
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="text-[18px] font-bold text-black">
+                    Share Preview
+                  </h3>
 
-              <button
-                onClick={() => setShowShareCard(false)}
-                className="rounded-full border border-gray-300 px-4 py-2 text-[14px] font-medium text-black"
-              >
-                Close
-              </button>
-            </div>
+                  <button
+                    onClick={() => setShowShareCard(false)}
+                    className="rounded-full border border-gray-300 px-4 py-2 text-[14px] font-medium text-black"
+                  >
+                    Close
+                  </button>
+                </div>
 
-            <div className="mb-4 flex flex-wrap gap-2">
-              <button
-                onClick={handleWhatsAppShare}
-                className="rounded-full border border-green-200 bg-green-50 px-4 py-2 text-[14px] font-medium text-green-700"
-              >
-                WhatsApp
-              </button>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <button
+                    onClick={handleWhatsAppShare}
+                    className="rounded-full border border-green-200 bg-green-50 px-4 py-2 text-[14px] font-medium text-green-700"
+                  >
+                    WhatsApp
+                  </button>
 
-              <button
-                onClick={handleTelegramShare}
-                className="rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-[14px] font-medium text-sky-700"
-              >
-                Telegram
-              </button>
+                  <button
+                    onClick={handleTelegramShare}
+                    className="rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-[14px] font-medium text-sky-700"
+                  >
+                    Telegram
+                  </button>
 
-              <button
-                onClick={handleXShare}
-                className="rounded-full border border-gray-300 bg-gray-50 px-4 py-2 text-[14px] font-medium text-black"
-              >
-                X
-              </button>
+                  <button
+                    onClick={handleXShare}
+                    className="rounded-full border border-gray-300 bg-gray-50 px-4 py-2 text-[14px] font-medium text-black"
+                  >
+                    X
+                  </button>
 
-              <button
-                onClick={handleFacebookShare}
-                className="rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-[14px] font-medium text-blue-700"
-              >
-                Facebook
-              </button>
+                  <button
+                    onClick={handleFacebookShare}
+                    className="rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-[14px] font-medium text-blue-700"
+                  >
+                    Facebook
+                  </button>
 
-              <button
-                onClick={handleDownloadShareCard}
-                disabled={isDownloading}
-                className={`rounded-full border border-gray-300 px-4 py-2 text-[14px] font-medium text-black ${
-                  isDownloading ? "opacity-60 cursor-not-allowed" : ""
-                }`}
-              >
-                {isDownloading ? "Downloading..." : "Download"}
-              </button>
-            </div>
-
-            <div
-              ref={shareCardRef}
-              className="rounded-[28px] border border-[#e6dfd6] bg-[#f9f7f4] px-5 py-6 shadow-[0_10px_30px_rgba(0,0,0,0.08)]"
-            >
-              <div className="text-center">
-                <h2 className="text-[34px] leading-none font-bold tracking-tight">
-                  <span className="text-black">Facti</span>
-                  <span className="bg-blue-600 text-white px-1.5 ml-0.5 inline-block">
-                    sizer
-                  </span>
-                </h2>
-                <p className="text-[13px] text-gray-600 mt-1">
-                  Check facts instantly
-                </p>
+                  <button
+                    onClick={handleDownloadShareCard}
+                    disabled={isDownloading}
+                    className={`rounded-full border border-gray-300 px-4 py-2 text-[14px] font-medium text-black ${
+                      isDownloading ? "opacity-60 cursor-not-allowed" : ""
+                    }`}
+                  >
+                    {isDownloading ? "Downloading..." : "Download"}
+                  </button>
+                </div>
               </div>
 
-              <div className="mt-5 rounded-[22px] border border-[#ddd4ca] bg-white/80 px-4 py-4">
-                <p className="text-center text-[13px] font-medium tracking-[0.25em] text-gray-500">
-                  CLAIM
-                </p>
-                <p className="mt-3 text-center text-[24px] leading-8 font-semibold text-[#222]">
-                  {getClaimText()}
-                </p>
-              </div>
-
-              <div className="mt-5 w-full flex justify-center">
-                <p
-                  className={`text-center text-[44px] font-extrabold leading-none tracking-tight ${getShareVerdictColor()}`}
-                >
-                  {verdict}
-                </p>
-              </div>
-
-              <div className="mt-5">
-                <p className="text-[15px] leading-7 text-gray-800">
-                  {getShortExplanation() || "Explanation will appear here."}
-                </p>
-              </div>
-
-              <div className="mt-5 flex items-center justify-between gap-4">
-                <div className="flex-1">
-                  <p className="text-[15px] text-gray-700">
-                    Confidence:{" "}
-                    <span className="font-semibold text-black">
-                      {confidence || "--"}
+              <div
+                ref={shareCardRef}
+                className="rounded-[28px] border border-[#e6dfd6] bg-[#f9f7f4] px-5 py-6 shadow-[0_10px_30px_rgba(0,0,0,0.08)]"
+              >
+                <div className="text-center">
+                  <h2 className="text-[34px] leading-none font-bold tracking-tight">
+                    <span className="text-black">Facti</span>
+                    <span className="bg-blue-600 text-white px-1.5 ml-0.5 inline-block">
+                      sizer
                     </span>
+                  </h2>
+                  <p className="text-[13px] text-gray-600 mt-1">
+                    Check facts instantly
                   </p>
                 </div>
-                <div className="rounded-full border border-[#d9c7b4] bg-[#fffaf3] px-4 py-2 text-[12px] font-semibold tracking-wide text-[#7a5a36]">
-                  VERIFIED BY FACTISIZER
-                </div>
-              </div>
 
-              {sources.length > 0 && (
-                <div className="mt-5">
-                  <p className="text-[14px] font-bold text-black mb-2">
-                    Sources
+                <div className="mt-5 rounded-[22px] border border-[#ddd4ca] bg-white/80 px-4 py-4">
+                  <p className="text-center text-[13px] font-medium tracking-[0.25em] text-gray-500">
+                    CLAIM
                   </p>
-                  <div className="space-y-2">
-                    {sources.slice(0, 2).map((source, index) => (
-                      <div
-                        key={index}
-                        className="rounded-[14px] border border-[#e8e1d8] bg-white px-3 py-2 text-[12px] text-gray-700"
-                      >
-                        {source}
-                      </div>
-                    ))}
+                  <p className="mt-3 text-center text-[24px] leading-8 font-semibold text-[#222]">
+                    {getClaimText()}
+                  </p>
+                </div>
+
+                <div className="mt-5 w-full flex justify-center">
+                  <p
+                    className={`text-center text-[44px] font-extrabold leading-none tracking-tight ${getShareVerdictColor()}`}
+                  >
+                    {verdict}
+                  </p>
+                </div>
+
+                <div className="mt-5">
+                  <p className="text-[15px] leading-7 text-gray-800">
+                    {getShortExplanation() || "Explanation will appear here."}
+                  </p>
+                </div>
+
+                <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex-1">
+                    <p className="text-[15px] text-gray-700">
+                      Confidence:{" "}
+                      <span className="font-semibold text-black">
+                        {confidence || "--"}
+                      </span>
+                    </p>
+                  </div>
+                  <div className="w-full sm:w-auto rounded-full border border-[#d9c7b4] bg-[#fffaf3] px-4 py-2 text-center text-[12px] font-semibold tracking-wide text-[#7a5a36]">
+                    VERIFIED BY FACTISIZER
                   </div>
                 </div>
-              )}
 
-              <div className="mt-6 text-center">
-                <p className="text-[18px] font-semibold tracking-[0.22em] text-gray-600">
-                  FACTISIZER.COM
-                </p>
+                {sources.length > 0 && (
+                  <div className="mt-5">
+                    <p className="text-[14px] font-bold text-black mb-2">
+                      Sources
+                    </p>
+                    <div className="space-y-2">
+                      {sources.slice(0, 2).map((source, index) => (
+                        <div
+                          key={index}
+                          className="rounded-[14px] border border-[#e8e1d8] bg-white px-3 py-2 text-[12px] text-gray-700"
+                        >
+                          {source}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="mt-6 text-center">
+                  <p className="text-[18px] font-semibold tracking-[0.22em] text-gray-600">
+                    FACTISIZER.COM
+                  </p>
+                </div>
               </div>
             </div>
           </div>
